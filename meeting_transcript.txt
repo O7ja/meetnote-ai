@@ -1,0 +1,1136 @@
+# Meeting Notes Archive
+
+## Product Development, Engineering & Operations
+
+**Organization:** NovaTech Solutions
+**Document Type:** Internal Meeting Notes
+**Period Covered:** January–September 2026
+**Status:** Dummy / Test Data
+
+---
+
+# Table of Contents
+
+1. Executive Product Planning Meeting — January 8, 2026
+2. Engineering Sprint Planning — January 15, 2026
+3. Customer Feedback Review — January 29, 2026
+4. AI Integration Strategy Meeting — February 12, 2026
+5. Security & Compliance Meeting — February 26, 2026
+6. Q1 Performance Review — March 12, 2026
+7. Mobile Application Planning — March 26, 2026
+8. Database Migration Meeting — April 9, 2026
+9. Marketing & Product Alignment — April 23, 2026
+10. Engineering Retrospective — May 7, 2026
+11. AI Assistant Evaluation Meeting — May 21, 2026
+12. Infrastructure & Cloud Planning — June 4, 2026
+13. Mid-Year Business Review — June 18, 2026
+14. Customer Support Automation Meeting — July 2, 2026
+15. Hiring & Internship Planning — July 16, 2026
+16. API Architecture Review — July 30, 2026
+17. Product Roadmap Meeting — August 13, 2026
+18. Security Incident Simulation — August 27, 2026
+19. Q3 Review Meeting — September 10, 2026
+20. Final Roadmap & 2027 Planning — September 24, 2026
+
+---
+
+# 1. Executive Product Planning Meeting
+
+**Date:** January 8, 2026
+**Time:** 10:00 AM – 11:30 AM
+**Location:** Conference Room A
+**Meeting Type:** Product Planning
+
+### Attendees
+
+* Sarah Ahmed — Product Manager
+* Hamza Khan — Engineering Manager
+* Ali Raza — Backend Engineer
+* Maryam Tariq — Frontend Engineer
+* Usman Shah — QA Lead
+* Hina Malik — UX Designer
+* Bilal Hassan — Business Analyst
+
+### Agenda
+
+1. Review previous year's product performance
+2. Define major product goals for 2026
+3. Discuss customer complaints
+4. Identify engineering priorities
+5. Establish Q1 milestones
+
+### Discussion
+
+Sarah opened the meeting by reviewing the company's performance during 2025. The product had approximately 18,000 registered users, although only around 7,200 users were considered monthly active users.
+
+The largest source of customer complaints was the reporting module. Customers reported that reports took too long to generate when they contained more than 10,000 records.
+
+Hamza explained that the reporting system currently executes several database queries sequentially. He suggested introducing background jobs for large reports.
+
+Ali proposed using Celery with Redis for asynchronous report generation. The team agreed that this should be investigated before rewriting the reporting module.
+
+The frontend team also reported that users were confused by the current navigation structure. Hina suggested redesigning the dashboard and grouping related features under clearer categories.
+
+### Decisions
+
+* Reporting performance will be treated as a Q1 priority.
+* Large reports will be moved to background processing.
+* Dashboard navigation will be redesigned.
+* A technical investigation into Celery and Redis will be completed before January 20.
+* Product analytics will be added to measure feature usage.
+
+### Action Items
+
+| Task                                       | Owner | Deadline |
+| ------------------------------------------ | ----- | -------- |
+| Investigate asynchronous report generation | Ali   | Jan 20   |
+| Prepare dashboard redesign                 | Hina  | Jan 22   |
+| Review database queries                    | Hamza | Jan 18   |
+| Prepare analytics requirements             | Bilal | Jan 19   |
+| Create QA performance test                 | Usman | Jan 23   |
+
+---
+
+# 2. Engineering Sprint Planning
+
+**Date:** January 15, 2026
+**Time:** 2:00 PM – 3:15 PM
+**Location:** Engineering Meeting Room
+
+### Attendees
+
+* Hamza Khan
+* Ali Raza
+* Maryam Tariq
+* Usman Shah
+* Danish Iqbal
+* Noor Fatima
+
+### Sprint Goal
+
+The main objective of Sprint 14 is to improve report generation performance and resolve several high-priority bugs.
+
+### Current Problems
+
+The team identified three major technical issues:
+
+1. Report generation blocks web requests.
+2. Large CSV exports sometimes cause memory spikes.
+3. Users do not receive notifications when reports are ready.
+
+Ali presented a proposed architecture where the API would create a report-generation task and return a task ID immediately.
+
+The worker would process the report in the background. Once processing finished, the system would store the generated file and notify the user.
+
+### Proposed Flow
+
+```text
+User
+  |
+  v
+Frontend
+  |
+  v
+REST API
+  |
+  v
+Task Queue
+  |
+  v
+Celery Worker
+  |
+  v
+Report Generator
+  |
+  v
+Object Storage
+  |
+  v
+Notification Service
+```
+
+### Decision
+
+The team approved the architecture for a limited prototype.
+
+### Concerns
+
+Usman raised concerns about duplicate jobs being created if a user repeatedly clicks the download button.
+
+The team decided that the API should generate an idempotency key for report requests.
+
+### Action Items
+
+* Ali: Build prototype worker.
+* Danish: Research object storage options.
+* Noor: Design notification UI.
+* Usman: Prepare load-testing scenarios.
+* Hamza: Review architecture.
+
+---
+
+# 3. Customer Feedback Review
+
+**Date:** January 29, 2026
+**Time:** 11:00 AM – 12:00 PM
+
+### Purpose
+
+Review customer feedback collected during January.
+
+### Main Feedback Categories
+
+**Performance:** 38%
+
+**Navigation:** 22%
+
+**Missing features:** 19%
+
+**Mobile experience:** 13%
+
+**Other:** 8%
+
+Customers frequently requested:
+
+* Better search
+* Saved filters
+* Mobile notifications
+* Faster reports
+* Bulk editing
+* Role-based dashboards
+
+One enterprise customer requested the ability to schedule reports automatically.
+
+Sarah suggested adding scheduled reports to the Q2 roadmap rather than Q1.
+
+The team agreed that saved filters should be investigated immediately because the feature would also reduce repeated searches.
+
+### Decision
+
+Saved filters will be considered for Sprint 16.
+
+### Action Item
+
+Product team will prepare a functional specification for saved filters by February 5.
+
+---
+
+# 4. AI Integration Strategy Meeting
+
+**Date:** February 12, 2026
+**Time:** 3:00 PM – 4:30 PM
+
+### Attendees
+
+* Sarah Ahmed
+* Hamza Khan
+* Ali Raza
+* Hina Malik
+* Bilal Hassan
+* Omar Farooq — AI Consultant
+
+### Objective
+
+Discuss possible applications of generative AI within the platform.
+
+### Proposed Features
+
+Omar presented several possible AI features:
+
+1. AI-powered document search
+2. Natural-language reporting
+3. Automated customer-support responses
+4. Meeting summarization
+5. Internal knowledge assistant
+6. Anomaly detection
+
+The team agreed that an internal knowledge assistant would be the easiest feature to prototype.
+
+The proposed assistant would answer questions using company documentation rather than relying entirely on the language model's general knowledge.
+
+Ali proposed a Retrieval-Augmented Generation architecture.
+
+### Proposed Architecture
+
+```text
+Documents
+   |
+   v
+Document Parser
+   |
+   v
+Chunking
+   |
+   v
+Embeddings
+   |
+   v
+Vector Database
+   |
+   v
+Retriever
+   |
+   v
+LLM
+   |
+   v
+Answer + Citations
+```
+
+### Important Requirement
+
+The assistant must provide citations for information retrieved from company documents.
+
+Hina emphasized that users should be able to click a citation and see the original source.
+
+### Decision
+
+A proof of concept will be developed internally.
+
+### Action Items
+
+* Ali: Build initial RAG prototype.
+* Omar: Recommend embedding models.
+* Bilal: Collect internal documentation.
+* Hina: Design assistant interface.
+* Sarah: Define acceptable use cases.
+
+---
+
+# 5. Security & Compliance Meeting
+
+**Date:** February 26, 2026
+**Time:** 10:30 AM – 12:00 PM
+
+### Topics
+
+* Authentication
+* Authorization
+* Data encryption
+* AI privacy
+* Logging
+* Access control
+
+The security team emphasized that internal documents must not be sent to external AI services without approval.
+
+Hamza proposed separating sensitive documents from general documentation.
+
+The team discussed role-based access control.
+
+For example:
+
+```text
+Administrator
+    |
+    +-- Engineering Documents
+    +-- Finance Documents
+    +-- HR Documents
+
+Engineer
+    |
+    +-- Engineering Documents
+
+Employee
+    |
+    +-- General Documents
+```
+
+### Decision
+
+The RAG system must respect existing user permissions.
+
+A user should never receive information from a document they are not authorized to access.
+
+### Action Items
+
+* Security team to define access-control requirements.
+* Engineering team to include metadata filters in retrieval.
+* AI team to document external API usage.
+* Legal team to review AI data-processing requirements.
+
+---
+
+# 6. Q1 Performance Review
+
+**Date:** March 12, 2026
+
+### Business Metrics
+
+* Monthly active users increased from 7,200 to 8,150.
+* Report-generation complaints decreased.
+* API error rate decreased from 2.8% to 1.6%.
+* Average report generation time decreased by approximately 42%.
+
+### Engineering Update
+
+The asynchronous reporting system was successfully deployed to 20% of users.
+
+The deployment revealed an issue involving duplicate report-generation tasks.
+
+The team introduced request deduplication using idempotency keys.
+
+### Product Update
+
+The dashboard redesign was approximately 70% complete.
+
+### AI Update
+
+The internal knowledge assistant prototype was able to answer approximately 72% of the test questions correctly.
+
+However, several answers contained information from outdated documents.
+
+### Decision
+
+Document versioning must be included before the AI assistant moves beyond prototype status.
+
+---
+
+# 7. Mobile Application Planning
+
+**Date:** March 26, 2026
+**Time:** 1:00 PM – 2:30 PM
+
+### Objective
+
+Discuss the company's mobile application strategy.
+
+The existing web application is responsive but does not provide a native mobile experience.
+
+The team discussed three options:
+
+1. Native Android and iOS applications
+2. Flutter
+3. React Native
+
+The engineering team estimated that separate native applications would require significantly more development and maintenance effort.
+
+React Native was considered because the frontend team already has strong JavaScript experience.
+
+### Decision
+
+A small React Native prototype will be developed.
+
+### Prototype Requirements
+
+* Login
+* Dashboard
+* Notifications
+* Report status
+* Profile
+* Basic search
+
+### Deadline
+
+Prototype expected by April 20.
+
+---
+
+# 8. Database Migration Meeting
+
+**Date:** April 9, 2026
+
+### Current Database
+
+PostgreSQL 15
+
+### Proposed Database
+
+PostgreSQL 17
+
+The infrastructure team recommended upgrading because of improvements in performance and maintenance.
+
+However, the migration could affect several extensions.
+
+The team decided to create a staging environment identical to production.
+
+### Migration Plan
+
+1. Backup production database.
+2. Restore backup into staging.
+3. Upgrade staging database.
+4. Run automated tests.
+5. Perform performance testing.
+6. Verify extensions.
+7. Schedule production migration.
+8. Monitor system after migration.
+
+### Risk
+
+The primary concern is downtime.
+
+The team wants to keep the expected maintenance window below 30 minutes.
+
+---
+
+# 9. Marketing & Product Alignment
+
+**Date:** April 23, 2026
+
+### Discussion
+
+Marketing requested several product screenshots for the upcoming campaign.
+
+The product team explained that the new dashboard would not be fully released until May.
+
+Marketing proposed using a controlled preview environment.
+
+The teams also discussed messaging for the upcoming AI assistant.
+
+### Proposed Marketing Message
+
+"Find answers across your organization's knowledge in seconds."
+
+The legal team requested that marketing avoid claims suggesting that AI-generated answers are guaranteed to be accurate.
+
+### Decision
+
+Marketing materials must clearly identify the AI assistant as an AI-powered feature.
+
+---
+
+# 10. Engineering Retrospective
+
+**Date:** May 7, 2026
+
+### What Went Well
+
+* Reporting performance improved.
+* Automated testing coverage increased.
+* Deployment process became more consistent.
+* Teams communicated better during incidents.
+
+### What Did Not Go Well
+
+* Some requirements were unclear before development started.
+* QA sometimes received builds too late.
+* Documentation was inconsistent.
+* Several tickets were too large to complete within one sprint.
+
+### Proposed Improvements
+
+The team agreed to introduce a Definition of Ready.
+
+A ticket should not enter development unless it contains:
+
+* Clear description
+* Acceptance criteria
+* Dependencies
+* UI designs where applicable
+* Technical constraints
+
+### Decision
+
+The new Definition of Ready will become mandatory from Sprint 22.
+
+---
+
+# 11. AI Assistant Evaluation Meeting
+
+**Date:** May 21, 2026
+
+### Objective
+
+Evaluate the latest RAG assistant.
+
+### Evaluation Dataset
+
+The team created 250 questions covering:
+
+* HR
+* Engineering
+* Finance
+* Product
+* General company information
+
+### Results
+
+Correct answers: 203
+
+Incorrect answers: 31
+
+Unable to answer: 16
+
+The team identified three major failure categories:
+
+1. Incorrect retrieval
+2. Outdated documents
+3. Ambiguous questions
+
+### Example Failure
+
+Question:
+
+"What is the current remote-work policy?"
+
+The assistant retrieved a policy document from October 2025 even though a newer document existed from March 2026.
+
+### Proposed Solution
+
+Every document will contain:
+
+* Document ID
+* Department
+* Creation date
+* Last updated date
+* Version
+* Access permissions
+
+The retrieval system will prioritize the latest valid document.
+
+---
+
+# 12. Infrastructure & Cloud Planning
+
+**Date:** June 4, 2026
+
+### Current Infrastructure
+
+* Application servers
+* PostgreSQL
+* Redis
+* Celery workers
+* Object storage
+* Monitoring service
+
+The team discussed migrating some workloads to a managed cloud environment.
+
+### Main Concerns
+
+* Cost
+* Reliability
+* Vendor lock-in
+* Security
+* Migration complexity
+
+The infrastructure team proposed starting with non-critical workloads.
+
+### Decision
+
+No immediate full migration will occur.
+
+A limited cloud pilot will be conducted using the staging environment.
+
+---
+
+# 13. Mid-Year Business Review
+
+**Date:** June 18, 2026
+
+### Company Metrics
+
+| Metric                | January |    June |
+| --------------------- | ------: | ------: |
+| Registered Users      |  18,000 |  25,400 |
+| Monthly Active Users  |   7,200 |  11,300 |
+| API Error Rate        |    2.8% |    1.2% |
+| Avg. Report Time      | 4.8 min | 2.4 min |
+| Support Tickets/Month |   1,420 |   1,080 |
+
+### Product Status
+
+The new dashboard has been released to all customers.
+
+The AI assistant remains in beta.
+
+The mobile prototype has passed internal testing.
+
+### Management Priorities for H2
+
+1. Improve customer retention.
+2. Expand AI assistant capabilities.
+3. Launch mobile application.
+4. Improve analytics.
+5. Strengthen security controls.
+
+---
+
+# 14. Customer Support Automation Meeting
+
+**Date:** July 2, 2026
+
+### Objective
+
+Determine whether AI can automate repetitive support questions.
+
+The support team receives approximately 1,100 tickets per month.
+
+Approximately 35% involve repetitive questions.
+
+Common topics include:
+
+* Password reset
+* Account settings
+* Report generation
+* Billing information
+* User permissions
+
+The team proposed an AI support assistant that drafts responses for human agents.
+
+### Decision
+
+The system will initially operate in "draft-only" mode.
+
+AI will not automatically send messages to customers.
+
+A support representative must review every AI-generated response.
+
+### Success Criteria
+
+* Response drafting time reduced by 30%.
+* No increase in incorrect information.
+* Human approval rate above 80%.
+
+---
+
+# 15. Hiring & Internship Planning
+
+**Date:** July 16, 2026
+
+### Hiring Needs
+
+Engineering expects to require:
+
+* 2 backend engineers
+* 1 frontend engineer
+* 1 ML engineer
+* 2 QA engineers
+* 3 interns
+
+The internship program will focus on practical projects.
+
+### Internship Projects
+
+Possible projects include:
+
+1. RAG evaluation platform
+2. Customer-support analytics dashboard
+3. Automated testing framework
+4. Internal document search
+5. Mobile application improvements
+
+### Decision
+
+Interns will be assigned mentors.
+
+Each intern must have a defined project scope and weekly objectives.
+
+---
+
+# 16. API Architecture Review
+
+**Date:** July 30, 2026
+
+### Current API
+
+The backend currently uses REST APIs.
+
+The team discussed whether GraphQL should be introduced.
+
+### Discussion
+
+The frontend team likes GraphQL because it allows clients to request specific fields.
+
+The backend team expressed concerns about increased complexity and caching.
+
+After discussion, the team decided not to replace the REST API.
+
+GraphQL may be considered for a future analytics product.
+
+### API Standards
+
+All new REST endpoints should include:
+
+* Consistent naming
+* HTTP status codes
+* Pagination
+* Validation
+* Authentication
+* Authorization
+* Error format
+* API documentation
+
+---
+
+# 17. Product Roadmap Meeting
+
+**Date:** August 13, 2026
+
+### Q3 Priorities
+
+* Mobile beta
+* AI assistant improvements
+* Support automation
+* Advanced analytics
+
+### Q4 Potential Features
+
+* Scheduled reports
+* Custom dashboards
+* Advanced permissions
+* AI-generated summaries
+* Workflow automation
+
+### AI Assistant
+
+The team wants to improve citation accuracy.
+
+A new evaluation system will compare generated answers against source documents.
+
+The team also wants to track:
+
+* Retrieval precision
+* Citation correctness
+* Answer relevance
+* Hallucination rate
+* Response latency
+
+### Decision
+
+AI quality metrics will become part of the regular product review.
+
+---
+
+# 18. Security Incident Simulation
+
+**Date:** August 27, 2026
+
+### Scenario
+
+A simulated employee account was compromised.
+
+The security team tested whether the company could:
+
+1. Detect unusual activity.
+2. Disable the account.
+3. Identify accessed resources.
+4. Review logs.
+5. Notify relevant personnel.
+
+### Findings
+
+Detection worked, but notification was slower than expected.
+
+The team also discovered that some logs lacked sufficient context.
+
+### Recommendations
+
+* Improve authentication alerts.
+* Increase logging detail.
+* Create an incident-response checklist.
+* Conduct quarterly simulations.
+
+### Decision
+
+The incident-response process will be updated before the next simulation.
+
+---
+
+# 19. Q3 Review Meeting
+
+**Date:** September 10, 2026
+
+### Product Metrics
+
+Monthly active users reached 14,800.
+
+Mobile beta users reached 1,200.
+
+The AI assistant handled approximately 9,000 internal questions during the beta period.
+
+### AI Assistant Feedback
+
+Users particularly liked:
+
+* Citations
+* Fast answers
+* Document search
+* Department-specific knowledge
+
+Users complained about:
+
+* Occasionally outdated answers
+* Ambiguous searches
+* Long answers
+* Missing documents
+
+### Engineering Metrics
+
+API uptime remained above 99.8%.
+
+Average API latency improved by approximately 18%.
+
+### Decision
+
+The team will focus on reliability and answer quality rather than adding large numbers of new AI features.
+
+---
+
+# 20. Final Roadmap & 2027 Planning
+
+**Date:** September 24, 2026
+**Time:** 10:00 AM – 12:30 PM
+
+### Attendees
+
+* CEO
+* CTO
+* Product Manager
+* Engineering Manager
+* AI Lead
+* QA Lead
+* Security Lead
+* Marketing Manager
+* Customer Support Manager
+
+### Objective
+
+Review 2026 progress and define preliminary 2027 priorities.
+
+### 2026 Achievements
+
+The team highlighted:
+
+* Improved reporting performance
+* Redesigned dashboard
+* Mobile beta
+* Internal AI assistant
+* Support automation prototype
+* Improved API reliability
+* Expanded monitoring
+* Security simulations
+
+### Proposed 2027 Areas
+
+#### 1. AI Platform
+
+The company wants to create a centralized AI platform that can support multiple internal applications.
+
+Potential components:
+
+```text
+                    AI Platform
+                        |
+        +---------------+---------------+
+        |               |               |
+       RAG          AI Agents       Evaluation
+        |               |               |
+   Documents       Workflows        Metrics
+```
+
+#### 2. Analytics
+
+The analytics team wants to introduce predictive dashboards.
+
+Possible capabilities include:
+
+* Usage trends
+* Customer behavior analysis
+* Automated reports
+* Anomaly detection
+
+#### 3. Workflow Automation
+
+The company wants to reduce repetitive manual tasks.
+
+Potential workflows include:
+
+* Ticket classification
+* Report generation
+* Document processing
+* Employee onboarding
+* Customer notifications
+
+#### 4. Security
+
+Security priorities include:
+
+* Stronger authentication
+* Improved access controls
+* Better audit logs
+* Regular penetration testing
+* Security awareness training
+
+### Final Discussion
+
+The CTO emphasized that new features should be evaluated based on customer value, technical feasibility, security requirements, and operational cost.
+
+The product team will prepare a detailed 2027 roadmap.
+
+### Action Items
+
+| Task                            | Owner               | Deadline |
+| ------------------------------- | ------------------- | -------- |
+| Prepare 2027 AI roadmap         | AI Lead             | Oct 10   |
+| Prepare infrastructure proposal | CTO                 | Oct 15   |
+| Prepare security roadmap        | Security Lead       | Oct 12   |
+| Prepare mobile roadmap          | Product Manager     | Oct 8    |
+| Prepare analytics proposal      | Data Team           | Oct 14   |
+| Prepare hiring forecast         | Engineering Manager | Oct 20   |
+
+---
+
+# Appendix A — Frequently Mentioned Projects
+
+## Project Atlas
+
+Internal reporting and analytics platform.
+
+**Primary technologies:**
+
+* Python
+* Django
+* PostgreSQL
+* Redis
+* Celery
+* React
+
+**Primary owner:** Engineering Team
+
+---
+
+## Project Nova
+
+Internal AI knowledge assistant.
+
+**Primary technologies:**
+
+* Python
+* FastAPI
+* Vector database
+* Embedding models
+* LLM
+* RAG
+
+**Primary owner:** AI Engineering Team
+
+---
+
+## Project Pulse
+
+Mobile application.
+
+**Technology:** React Native
+
+**Primary purpose:** Provide employees and customers with mobile access to important platform features.
+
+---
+
+## Project Shield
+
+Security and compliance initiative.
+
+**Primary areas:**
+
+* Authentication
+* Authorization
+* Logging
+* Monitoring
+* Incident response
+
+---
+
+# Appendix B — Open Questions
+
+The following questions remained unresolved at the end of September:
+
+1. Which vector database should be used for production?
+2. Should AI inference be hosted internally or through an external provider?
+3. How should AI-generated content be audited?
+4. What retention period should be applied to AI conversations?
+5. Should mobile authentication support biometric login?
+6. Should scheduled reports be included in the Q4 release?
+7. What cloud provider should be used for future workloads?
+8. How should AI evaluation metrics be incorporated into CI/CD?
+9. Should support automation eventually send responses automatically?
+10. What additional security controls are required for AI applications?
+
+---
+
+# Appendix C — General Action Item Tracker
+
+| ID      | Action Item               | Department     | Owner  | Status      |
+| ------- | ------------------------- | -------------- | ------ | ----------- |
+| ACT-001 | Improve report generation | Engineering    | Ali    | Completed   |
+| ACT-002 | Redesign dashboard        | Product        | Hina   | Completed   |
+| ACT-003 | Implement saved filters   | Engineering    | Danish | In Progress |
+| ACT-004 | Build RAG prototype       | AI             | Ali    | Completed   |
+| ACT-005 | Add document versioning   | AI             | Omar   | In Progress |
+| ACT-006 | Test mobile prototype     | QA             | Usman  | Completed   |
+| ACT-007 | Cloud staging pilot       | Infrastructure | Hamza  | In Progress |
+| ACT-008 | Support AI draft system   | AI             | Noor   | In Progress |
+| ACT-009 | Improve security logging  | Security       | Farhan | In Progress |
+| ACT-010 | Prepare 2027 roadmap      | Product        | Sarah  | Pending     |
+
+---
+
+# Appendix D — Sample Questions for Document Retrieval Testing
+
+These questions can be used to test a document-search or RAG system.
+
+### Basic Retrieval
+
+1. Who is the product manager?
+2. What database does the company use?
+3. What was the initial number of registered users?
+4. What was the Q1 API error rate?
+5. Who was responsible for the dashboard redesign?
+
+### Multi-Document Retrieval
+
+6. What problems were identified with report generation, and what solution was proposed?
+7. How did the AI assistant evolve between February and September?
+8. What were the major security concerns related to the RAG system?
+9. What were the company's major priorities for the second half of 2026?
+10. What improvements were made to reporting performance?
+
+### Temporal Questions
+
+11. What was the monthly active user count in January?
+12. What was the monthly active user count in June?
+13. When was the AI assistant first proposed?
+14. When was the AI assistant evaluated using 250 questions?
+15. When did the mobile application prototype begin?
+
+### Comparison Questions
+
+16. Compare API error rates in January and June.
+17. Compare the AI assistant's early prototype performance with its later beta usage.
+18. Compare the company's Q1 priorities with its H2 priorities.
+19. What changed in the reporting architecture after January?
+20. How did the company's AI strategy change throughout 2026?
+
+### Specific Retrieval
+
+21. What was the proposed architecture for asynchronous report generation?
+22. Why did the security team require document-level permissions?
+23. What caused the AI assistant to retrieve outdated information?
+24. What were the success criteria for customer-support automation?
+25. Why was GraphQL not adopted?
+
+### Cross-Reference Questions
+
+26. Which project uses FastAPI?
+27. Which projects involve AI?
+28. Which action items were related to security?
+29. Which meetings discussed mobile development?
+30. Which meeting discussed the 2027 AI platform?
+
+### Challenging Questions
+
+31. What technical problems could prevent the company's AI assistant from providing reliable answers?
+32. Which decisions were made because of customer complaints?
+33. What evidence suggests that reporting performance improved during 2026?
+34. Which unresolved questions could affect the architecture of the future AI platform?
+35. What projects could potentially share infrastructure?
+
+---
+
+# Document Metadata
+
+**Organization:** NovaTech Solutions
+**Document Type:** Meeting Notes Archive
+**Period:** January–September 2026
+**Number of Meetings:** 20
+**Departments:** Engineering, AI, Product, QA, Security, Marketing, Infrastructure, Customer Support
+**Status:** Dummy Data
+**Purpose:** Testing document ingestion, search, retrieval, chunking, embeddings, RAG, reranking, citation generation, and evaluation systems.

@@ -1,0 +1,26 @@
+# Virtual environment
+meetnote/
+venv/
+.venv/
+env/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Generated notes
+meeting_notes.md
+meeting_notes_*.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
